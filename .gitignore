@@ -1,0 +1,49 @@
+# Vizzbot
+
+
+# Rails
+
+# Ignore bundler config.
+/.bundle
+/node_modules
+
+# Ignore all logfiles and tempfiles.
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Ignore pidfiles, but keep the directory.
+/tmp/pids/*
+!/tmp/pids/
+!/tmp/pids/.keep
+
+# Ignore files for development
+.byebug_history
+
+# React
+
+/client/.expo/**/*
+/client/.build_number
+/client/npm-debug.*
+/client/*.jks
+/client/*.p8
+/client/*.p12
+/client/*.key
+/client/*.mobileprovision
+/client/*.orig.*
+/client/*.ipa
+/client/node_modules
+/client/web-build
+
+/.expo
+# ^ this gets created when people accidentally run 'expo start' outside of the react folder
+
+# Mac
+
+.DS_Store
+/.vscode
+
+# JetBrains
+/.idea/*
+/client/.idea/*
