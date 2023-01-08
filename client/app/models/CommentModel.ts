@@ -4,4 +4,6 @@ export default interface Comment {
   author: string
   created_at: Date
   updated_at: Date
+  product_id: number
+  product?: Product
 }

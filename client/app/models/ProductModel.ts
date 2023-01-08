@@ -5,4 +5,7 @@ export default interface Product {
   stock?: number
   created_at: Date
   updated_at: Date
+  product_lineitem_id: number
+  lineitem?: Lineitem
+  comments: Comment[]
 }
