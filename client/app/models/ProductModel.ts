@@ -6,6 +6,7 @@ export default interface Product {
   created_at: Date
   updated_at: Date
   product_lineitem_id: number
+  track_id?: string
   lineitem?: Lineitem
   comments: Comment[]
 }

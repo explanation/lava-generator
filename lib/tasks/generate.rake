@@ -15,20 +15,30 @@ namespace :generate do
     }
 
     models.each do |model|
-      # Get the model's attributes and their types
-      attribute_types = model.columns.map { |col| [col.name, col.type, col.null] }
+      # Get the model's columns and their types
+      cols = model.columns.map { |col| [col.name, col.type, col.null] }
 
       # Get the model's relationships
       relationships = model.reflect_on_all_associations
 
       # Generate the interface for the model
       interface_string = "export default interface #{model.name.demodulize} {\n"
-      attribute_types.each do |name, type, nullable|
+      cols.each do |name, type, nullable|
         nullable = nullable ? '?' : ''
         if rails_to_typescript[type].nil?
           raise "Model has a type '#{type}' which is missing a mapping to typescript. Edit rails_to_typescript in generate.rake"
         end
         interface_string += "  #{name}#{nullable}: #{rails_to_typescript[type]}\n"
+      end
+
+      # Get the model's attributes (not backed by DB) and their types
+      attributes = model.attribute_names - model.column_names
+      attributes.each do |name|
+        type = model.attribute_types[name].type
+        if rails_to_typescript[model.attribute_types[name].type].nil?
+          raise "Model has a type '#{type}' which is missing a mapping to typescript. Edit rails_to_typescript in generate.rake"
+        end
+        interface_string += "  #{name}?: #{rails_to_typescript[type]}\n"
       end
 
       relationships.each do |relationship|
