@@ -1,6 +1,6 @@
-namespace :generate do
+namespace :typescript do
   desc "Generate TypeScript interfaces for ActiveRecord models. Interfaces include a property for each model attribute, with the property name and type corresponding to the attribute name and type."
-  task :interfaces => :environment do
+  task :migrate => :environment do
     Rails.application.eager_load!
     models = ApplicationRecord.descendants
 
