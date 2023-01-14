@@ -1,17 +1,17 @@
 namespace :typescript do
   desc "Generate TypeScript interfaces for ActiveRecord models. Interfaces include a property for each model attribute, with the property name and type corresponding to the attribute name and type."
-  task :migrate => :environment do
+  task migrate: :environment do
     Rails.application.eager_load!
     models = ApplicationRecord.descendants
 
-    BASE_PATH = 'client/app/models/'
+    BASE_PATH = "client/app/models/"
 
     rails_to_typescript = {
-        integer: :number,
-        text: :string,
-        string: :string,
-        datetime: :Date,
-        decimal: :number,
+      integer: :number,
+      text: :string,
+      string: :string,
+      datetime: :Date,
+      decimal: :number
     }
 
     models.each do |model|
@@ -24,10 +24,11 @@ namespace :typescript do
       # Generate the interface for the model
       interface_string = "export default interface #{model.name.demodulize} {\n"
       cols.each do |name, type, nullable|
-        nullable = nullable ? '?' : ''
+        nullable = nullable ? "?" : ""
         if rails_to_typescript[type].nil?
           raise "Model has a type '#{type}' which is missing a mapping to typescript. Edit rails_to_typescript in generate.rake"
         end
+
         interface_string += "  #{name}#{nullable}: #{rails_to_typescript[type]}\n"
       end
 
@@ -38,17 +39,33 @@ namespace :typescript do
         if rails_to_typescript[model.attribute_types[name].type].nil?
           raise "Model has a type '#{type}' which is missing a mapping to typescript. Edit rails_to_typescript in generate.rake"
         end
+
         interface_string += "  #{name}?: #{rails_to_typescript[type]}\n"
       end
 
+
+      # nullable_relationship? checks whether a relationship is optional by
+      # checking if a nullable forigen key exists
+      def nullable_relationship? from, to, cols
+        hash = {}
+        cols.each do |name, type, nullable|
+          hash[name.gsub("_id", "")] = nullable
+        end
+
+        nullable = hash[from.name.to_s.singularize] || hash[to.name.to_s.singularize]
+        nullable ? "?" : ""
+      end
+
       relationships.each do |relationship|
+        nullable = nullable_relationship? model, relationship, cols
+
         case relationship.macro
         when :has_one
-          interface_string += "  #{relationship.name}?: #{relationship.class_name}\n"
+          interface_string += "  #{relationship.name}#{nullable}: #{relationship.class_name}\n"
         when :has_many
-          interface_string += "  #{relationship.name}: #{relationship.class_name}[]\n"
+          interface_string += "  #{relationship.name}#{nullable}: #{relationship.class_name}[]\n"
         when :belongs_to
-          interface_string += "  #{relationship.name}?: #{relationship.class_name}\n"
+          interface_string += "  #{relationship.name}#{nullable}: #{relationship.class_name}\n"
         end
       end
 
@@ -56,10 +73,10 @@ namespace :typescript do
 
       # Write the interface to a file
       namespace = model.name.deconstantize
-      namespace_path = namespace.empty? ? '' : "#{namespace.underscore}/"
+      namespace_path = namespace.empty? ? "" : "#{namespace.underscore}/"
       path = "#{BASE_PATH}#{namespace_path}#{model.name.demodulize}Model.ts"
       FileUtils.mkdir_p(File.dirname(path))
-      File.open(path, 'w') do |file|
+      File.open(path, "w") do |file|
         file.puts(interface_string)
       end
     end
