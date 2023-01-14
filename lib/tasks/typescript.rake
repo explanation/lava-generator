@@ -61,11 +61,11 @@ namespace :typescript do
 
         case relationship.macro
         when :has_one
-          interface_string += "  #{relationship.name}#{nullable}: #{relationship.class_name}\n"
+          interface_string += "  #{relationship.name.demodulize}#{nullable}: #{relationship.class_name}\n"
         when :has_many
-          interface_string += "  #{relationship.name}#{nullable}: #{relationship.class_name}[]\n"
+          interface_string += "  #{relationship.name.demodulize}#{nullable}: #{relationship.class_name}[]\n"
         when :belongs_to
-          interface_string += "  #{relationship.name}#{nullable}: #{relationship.class_name}\n"
+          interface_string += "  #{relationship.name.demodulize}#{nullable}: #{relationship.class_name}\n"
         end
       end
 
