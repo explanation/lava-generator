@@ -11,7 +11,9 @@ namespace :typescript do
       text: :string,
       string: :string,
       datetime: :Date,
-      decimal: :number
+      decimal: :number,
+      boolean: :boolean,
+      jsonb: nil,         # this is our way of saying "ignore this field type"
     }
 
     models.each do |model|
@@ -22,12 +24,13 @@ namespace :typescript do
       relationships = model.reflect_on_all_associations
 
       # Generate the interface for the model
-      interface_string = "export default interface #{model.name.demodulize} {\n"
+      interface_string = "export default interface #{model.name.demodulize}Model {\n"
       cols.each do |name, type, nullable|
         nullable = nullable ? "?" : ""
-        if rails_to_typescript[type].nil?
+        if rails_to_typescript.keys.exclude?(type)
           raise "Model has a type '#{type}' which is missing a mapping to typescript. Edit rails_to_typescript in generate.rake"
         end
+        next if rails_to_typescript[type].nil?
 
         interface_string += "  #{name}#{nullable}: #{rails_to_typescript[type]}\n"
       end
