@@ -61,11 +61,11 @@ namespace :typescript do
 
         case relationship.macro
         when :has_one
-          interface_string += "  #{relationship.name.demodulize}#{nullable}: #{relationship.class_name}\n"
-        when :has_many
-          interface_string += "  #{relationship.name.demodulize}#{nullable}: #{relationship.class_name}[]\n"
-        when :belongs_to
-          interface_string += "  #{relationship.name.demodulize}#{nullable}: #{relationship.class_name}\n"
+          interface_string += "  #{relationship.name}#{nullable}: #{relationship.class_name.demodulize}\n"
+        when :has_many                                                                     
+          interface_string += "  #{relationship.name}#{nullable}: #{relationship.class_name.demodulize}[]\n"
+        when :belongs_to                                                                   
+          interface_string += "  #{relationship.name}#{nullable}: #{relationship.class_name.demodulize}\n"
         end
       end
 
@@ -74,6 +74,27 @@ namespace :typescript do
       # Write the interface to a file
       namespace = model.name.deconstantize
       namespace_path = namespace.empty? ? "" : "#{namespace.underscore}/"
+
+      # Auto import dependencies
+      relationships.each do |relationship|
+        rel_name = relationship.class_name.demodulize
+        rel_namespace = relationship.active_record.to_s.split("::")
+        if rel_namespace.count > 1
+          path = relationship.active_record.to_s.split("::")
+          path = path.map.with_index { |x,i| i ==  path.count-1 ? x : x.downcase }.join("/")
+          interface_string.prepend("import #{rel_name} from \"../#{path}Model\"\n")
+        else
+          begin
+            relationship.class_name.constantize
+          rescue
+            path = relationship.active_record.to_s.downcase + "/" + "#{rel_name}Model"
+            interface_string.prepend("import #{rel_name} from \"./#{path}\"\n")
+          else
+            interface_string.prepend("import #{rel_name} from \"./#{rel_name}Model\"\n")
+          end
+        end
+      end
+
       path = "#{BASE_PATH}#{namespace_path}#{model.name.demodulize}Model.ts"
       FileUtils.mkdir_p(File.dirname(path))
       File.open(path, "w") do |file|

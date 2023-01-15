@@ -1,3 +1,4 @@
+import Product from "./ProductModel"
 export default interface Comment {
   id: number
   body: string
