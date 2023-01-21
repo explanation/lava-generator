@@ -1,4 +1,4 @@
-class Product < ApplicationRecord
+class Product::Product < ApplicationRecord
   belongs_to :lineitem
   has_many :comments
 

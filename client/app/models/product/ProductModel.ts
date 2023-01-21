@@ -1,5 +1,7 @@
+import Lineitem from "./LineitemModel"
 import Comment from "./CommentModel"
-import Lineitem from "./product/LineitemModel"
+
+
 export default interface Product {
   id: number
   name: string
