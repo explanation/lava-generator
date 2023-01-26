@@ -11,56 +11,56 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[7.0].define(version: 2023_01_06_161701) do
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+    # These are extensions that must be enabled in order to support this database
+    enable_extension "plpgsql"
 
-  create_table "comments", force: :cascade do |t|
-    t.text "body", null: false
-    t.string "author", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "product_id", null: false
-    t.index ["product_id"], name: "index_comments_on_product_id"
-  end
+    create_table "comments", force: :cascade do |t|
+        t.text "body", null: false
+        t.string "author", null: false
+        t.datetime "created_at", null: false
+        t.datetime "updated_at", null: false
+        t.bigint "product_id", null: false
+        t.index ["product_id"], name: "index_comments_on_product_id"
+    end
 
-  create_table "posts", force: :cascade do |t|
-    t.string "title"
-    t.text "body"
-    t.datetime "published_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
+    create_table "posts", force: :cascade do |t|
+        t.string "title"
+        t.text "body"
+        t.datetime "published_at"
+        t.datetime "created_at", null: false
+        t.datetime "updated_at", null: false
+    end
 
-  create_table "product_lineitems", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
+    create_table "product_lineitems", force: :cascade do |t|
+        t.datetime "created_at", null: false
+        t.datetime "updated_at", null: false
+    end
 
-  create_table "products", force: :cascade do |t|
-    t.string "name", null: false
-    t.decimal "price"
-    t.integer "stock"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "product_lineitem_id", null: false
-    t.index ["product_lineitem_id"], name: "index_products_on_product_lineitem_id"
-  end
+    create_table "products", force: :cascade do |t|
+        t.string "name", null: false
+        t.decimal "price"
+        t.integer "stock"
+        t.datetime "created_at", null: false
+        t.datetime "updated_at", null: false
+        t.bigint "product_lineitem_id", null: false
+        t.index ["product_lineitem_id"], name: "index_products_on_product_lineitem_id"
+    end
 
-  create_table "tags", force: :cascade do |t|
-    t.string "name", null: false
-    t.text "description"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
+    create_table "tags", force: :cascade do |t|
+        t.string "name", null: false
+        t.text "description"
+        t.datetime "created_at", null: false
+        t.datetime "updated_at", null: false
+    end
 
-  create_table "users", force: :cascade do |t|
-    t.string "name"
-    t.integer "age"
-    t.datetime "birthday"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
+    create_table "users", force: :cascade do |t|
+        t.string "name"
+        t.integer "age"
+        t.datetime "birthday"
+        t.datetime "created_at", null: false
+        t.datetime "updated_at", null: false
+    end
 
-  add_foreign_key "comments", "products"
-  add_foreign_key "products", "product_lineitems"
+    add_foreign_key "comments", "products"
+    add_foreign_key "products", "product_lineitems"
 end

@@ -1,8 +1,8 @@
 class CreateProductLineitems < ActiveRecord::Migration[7.0]
-  def change
-    create_table :product_lineitems do |t|
+    def change
+        create_table :product_lineitems do |t|
 
-      t.timestamps
+            t.timestamps
+        end
     end
-  end
 end
