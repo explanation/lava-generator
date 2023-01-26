@@ -1,9 +1,9 @@
-import Product from "./ProductModel"
+import ProductModel from "./ProductModel"
 
 
-export default interface Lineitem {
+export default interface LineitemModel {
   id: number
   created_at: Date
   updated_at: Date
-  product: Product
+  product: ProductModel
 }

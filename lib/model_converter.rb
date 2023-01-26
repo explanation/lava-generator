@@ -9,7 +9,9 @@ class ModelConverter
     text: :string,
     string: :string,
     datetime: :Date,
-    decimal: :number
+    decimal: :number,
+    boolean: :boolean,
+    jsonb: nil,         # this is our way of saying "ignore this field type"   decimal: :number
   }.freeze
   BASE_PATH = "client/app/models/".freeze
 
@@ -28,11 +30,11 @@ class ModelConverter
   def generate_interface_for(model)
     cols = model.columns.map { |col| [col.name, col.type, col.null] }
     relationships = model.reflect_on_all_associations
-    interface_string = "export default interface #{model.name.demodulize} {\n"
+    interface_string = "export default interface #{model.name.demodulize}Model {\n"
 
     cols.each do |name, type, nullable|
       nullable = nullable ? "?" : ""
-      if RAILS_TO_TYPESCRIPT[type].nil?
+      if RAILS_TO_TYPESCRIPT.keys.exclude?(type)
         raise "Model has a type '#{type}' which is missing a mapping to typescript. Edit rails_to_typescript in generate.rake"
       end
 
@@ -54,11 +56,11 @@ class ModelConverter
 
       case relationship.macro
       when :has_one
-        interface_string += "  #{relationship.name}#{nullable}: #{relationship.class_name.demodulize}\n"
+        interface_string += "  #{relationship.name}#{nullable}: #{relationship.class_name.demodulize}Model\n"
       when :has_many                                                                     
-        interface_string += "  #{relationship.name}#{nullable}: #{relationship.class_name.demodulize}[]\n"
+        interface_string += "  #{relationship.name}#{nullable}: #{relationship.class_name.demodulize}Model[]\n"
       when :belongs_to                                                                   
-        interface_string += "  #{relationship.name}#{nullable}: #{relationship.class_name.demodulize}\n"
+        interface_string += "  #{relationship.name}#{nullable}: #{relationship.class_name.demodulize}Model\n"
       end
     end
 
@@ -70,7 +72,7 @@ class ModelConverter
 
     imports = relationships.map do |relationship|
       rel_name = relationship.class_name.demodulize
-      "import #{rel_name} from \"./#{rel_name}Model\"\n"
+      "import #{rel_name}Model from \"./#{rel_name}Model\"\n"
     end
 
     imports << "\n\n" if imports.size > 0

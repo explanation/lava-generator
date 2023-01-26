@@ -1,8 +1,8 @@
-import Lineitem from "./LineitemModel"
-import Comment from "./CommentModel"
+import LineitemModel from "./LineitemModel"
+import CommentModel from "./CommentModel"
 
 
-export default interface Product {
+export default interface ProductModel {
   id: number
   name: string
   price?: number
@@ -11,6 +11,6 @@ export default interface Product {
   updated_at: Date
   product_lineitem_id: number
   track_id?: string
-  lineitem: Lineitem
-  comments: Comment[]
+  lineitem: LineitemModel
+  comments: CommentModel[]
 }
