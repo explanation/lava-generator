@@ -44,7 +44,7 @@ class ModelConverter
         attributes = model.attribute_names - model.column_names
         attributes.each do |name|
             type = model.attribute_types[name].type
-            if RAILS_TO_TYPESCRIPT[model.attribute_types[name].type].nil?
+            if RAILS_TO_TYPESCRIPT[type].nil?
                 raise "Model has a type '#{type}' which is missing a mapping to typescript. Edit rails_to_typescript in generate.rake"
             end
 
