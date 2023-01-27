@@ -38,17 +38,27 @@ class ModelConverter
                 raise "Model has a type '#{type}' which is missing a mapping to typescript. Edit rails_to_typescript in generate.rake"
             end
 
-            interface_string += "    #{name}#{nullable}: #{RAILS_TO_TYPESCRIPT[type]}\n"
+            if RAILS_TO_TYPESCRIPT[type].nil?
+                commented = "//"
+                comment = "  // #{type} column types are flagged to be ignored"
+            end
+
+            interface_string += "#{commented}    #{name}#{nullable}: #{RAILS_TO_TYPESCRIPT[type]}#{comment}\n"
         end
 
         attributes = model.attribute_names - model.column_names
         attributes.each do |name|
             type = model.attribute_types[name].type
-            if RAILS_TO_TYPESCRIPT[type].nil?
+            if RAILS_TO_TYPESCRIPT.keys.exclude?(type)
                 raise "Model has a type '#{type}' which is missing a mapping to typescript. Edit rails_to_typescript in generate.rake"
             end
 
-            interface_string += "    #{name}?: #{RAILS_TO_TYPESCRIPT[type]}\n"
+            if RAILS_TO_TYPESCRIPT[type].nil?
+                commented = "//"
+                comment = "  // #{type} column types are flagged to be ignored"
+            end
+
+            interface_string += "#{commented}    #{name}: #{RAILS_TO_TYPESCRIPT[type]}#{comment}\n"
         end
 
         relationships.each do |relationship|
