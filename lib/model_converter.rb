@@ -11,7 +11,7 @@ class ModelConverter
         datetime: :Date,
         decimal: :number,
         boolean: :boolean,
-        jsonb: nil,                 # this is our way of saying "ignore this field type"     decimal: :number
+        jsonb: nil,                 # this is our way of saying "ignore this field type"
     }.freeze
     BASE_PATH = "client/app/models/".freeze
 
@@ -35,20 +35,35 @@ class ModelConverter
         cols.each do |name, type, nullable|
             nullable = nullable ? "?" : ""
             if RAILS_TO_TYPESCRIPT.keys.exclude?(type)
-                raise "Model has a type '#{type}' which is missing a mapping to typescript. Edit rails_to_typescript in generate.rake"
+                raise "ERROR: #{model} has a column #{name} with type '#{type}' which is missing a mapping to typescript. Edit rails_to_typescript in generate.rake"
             end
 
-            interface_string += "    #{name}#{nullable}: #{RAILS_TO_TYPESCRIPT[type]}\n"
+            if RAILS_TO_TYPESCRIPT[type].nil?
+                commented = "//"
+                comment = "  // #{type} column types are flagged to be ignored"
+            end
+
+            interface_string += "#{commented}    #{name}#{nullable}: #{RAILS_TO_TYPESCRIPT[type]}#{comment}\n"
         end
 
         attributes = model.attribute_names - model.column_names
         attributes.each do |name|
             type = model.attribute_types[name].type
-            if RAILS_TO_TYPESCRIPT[model.attribute_types[name].type].nil?
-                raise "Model has a type '#{type}' which is missing a mapping to typescript. Edit rails_to_typescript in generate.rake"
+
+            if type.nil?
+                raise "ERROR: #{model} has an attribute #{name} with a nil type. Add it to the attribute, e.g. attribute :concept_media_url, :string"
             end
 
-            interface_string += "    #{name}?: #{RAILS_TO_TYPESCRIPT[type]}\n"
+            if RAILS_TO_TYPESCRIPT.keys.exclude?(type)
+                raise "ERROR: #{model} has an attribute #{name} with type '#{type}' which is missing a mapping to typescript. Edit rails_to_typescript in generate.rake"
+            end
+
+            if RAILS_TO_TYPESCRIPT[type].nil?
+                commented = "//"
+                comment = "  // #{type} column types are flagged to be ignored"
+            end
+
+            interface_string += "#{commented}    #{name}?: #{RAILS_TO_TYPESCRIPT[type]}#{comment}\n"
         end
 
         relationships.each do |relationship|
@@ -57,9 +72,9 @@ class ModelConverter
             case relationship.macro
             when :has_one
                 interface_string += "    #{relationship.name}#{nullable}: #{relationship.class_name.demodulize}Model\n"
-            when :has_many                                                                                                                                         
+            when :has_many
                 interface_string += "    #{relationship.name}#{nullable}: #{relationship.class_name.demodulize}Model[]\n"
-            when :belongs_to                                                                                                                                     
+            when :belongs_to
                 interface_string += "    #{relationship.name}#{nullable}: #{relationship.class_name.demodulize}Model\n"
             end
         end
