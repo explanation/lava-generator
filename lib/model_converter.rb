@@ -91,7 +91,7 @@ class ModelConverter
         end
 
         imports << "\n\n" if imports.size > 0
-        interface_string.prepend(imports.join(""))
+        interface_string.prepend(imports.uniq.join(""))
 
         path = "#{BASE_PATH}#{namespace_path}#{model.name.demodulize}Model.ts"
         FileUtils.mkdir_p(File.dirname(path))
