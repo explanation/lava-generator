@@ -1,3 +1,3 @@
 class Product::Comment < ApplicationRecord
-	belongs_to :product
+  belongs_to :commentable, polymorphic: true
 end

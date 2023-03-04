@@ -2,6 +2,9 @@ default: &default
   adapter: postgresql
   encoding: unicode
   reaping_frequency: <%= ENV.fetch('DB_REAP_FREQ') { 5 } %>
+  host: 0.0.0.0
+  username: postgres
+  password: mysecretpassword
   pool: <%= ENV.fetch('DB_POOL_SIZE_WORKER') { 25 } %>
 
 development:
