@@ -107,12 +107,12 @@ GEM
       timeout
     net-smtp (0.3.3)
       net-protocol
-    nio4r (2.5.8)
+    nio4r (2.5.9)
     nokogiri (1.13.10)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
     pg (1.4.5)
-    puma (5.6.5)
+    puma (5.6.7)
       nio4r (~> 2.0)
     racc (1.6.2)
     rack (2.2.5)
@@ -166,7 +166,7 @@ DEPENDENCIES
   byebug
   debug
   pg
-  puma (~> 5.0)
+  puma (~> 5.6)
   rails (~> 7.0.4)
   sqlite3 (~> 1.4)
   tzinfo-data
